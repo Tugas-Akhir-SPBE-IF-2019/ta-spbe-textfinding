@@ -68,8 +68,8 @@ def datacleaner(data):
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
 
-filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+# filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
 
-(instansi, judul) = pdfparser(filename)
-print(instansi)
-print(judul)
+# (instansi, judul) = pdfparser(filename)
+# print(instansi)
+# print(judul)

@@ -11,9 +11,9 @@ import io
 import re
 
 
-def pdfparser(data):
+def pdfparser(filename):
 
-    fp = open(data, 'rb')
+    fp = open(filename, 'rb')
     rsrcmgr = PDFResourceManager()
     retstr = io.StringIO()
     codec = 'utf-8'
@@ -28,6 +28,8 @@ def pdfparser(data):
     startingPoint = None
     startfound = False
     fulltext = ''
+    judul = ''
+    instansi = ''
 
     for pageNumber, page in enumerate(PDFPage.get_pages(fp)):
         interpreter.process_page(page)
@@ -37,16 +39,33 @@ def pdfparser(data):
 
         if (startfound == False):
             if (pageNumber == page_no_title):
-                # get nama instansi
-                instansi = re.split('(?i)peraturan', data)[0]
+                if (re.search('rancangan', data, re.IGNORECASE) is None):
 
-                # get starting point for judul
-                peraturan = re.split('(?i)(peraturan)', data)[1]
-                data = re.split('(?i)(peraturan)', data)[2]
+                    # get nama instansi
+                    instansi = re.split('(?i)peraturan', data)[0]
 
-                # get judul
-                judul = peraturan + re.split('(?i)(dengan rahmat)', data)[0]
-                judul = " ".join(judul.split())
+                    # get starting point for judul
+                    peraturan = re.split('(?i)(peraturan)', data)[1]
+                    data = re.split('(?i)(peraturan)', data)[2]
+
+                    # get judul
+                    judul = peraturan + \
+                        re.split('(?i)(dengan rahmat)', data)[0]
+                    judul = " ".join(judul.split())
+
+                else:
+
+                    # get nama instansi
+                    instansi = re.split('(?i)rancangan', data)[0]
+
+                    # get starting point for judul
+                    rancangan = re.split('(?i)(rancangan)', data)[1]
+                    data = re.split('(?i)(rancangan)', data)[2]
+
+                    # get judul
+                    judul = rancangan + \
+                        re.split('(?i)(dengan rahmat)', data)[0]
+                    judul = " ".join(judul.split())
 
             # get starting point for isi dokumen bukti
             startingPoint = re.search('(?i)(bab I)', data)
@@ -62,7 +81,10 @@ def pdfparser(data):
         else:
             fulltext += data
 
-    return (fulltext)
+    # clean data and write to txt
+    datacleaner(fulltext, filename)
+
+    return (instansi, judul)
 
 
 def datacleaner(data, filename):
@@ -76,14 +98,11 @@ def datacleaner(data, filename):
 
     data = re.sub(r'(\n)+', '', data, flags=re.MULTILINE)
 
-    with open(f'cleaned_{filename}.txt', 'w') as file:
-        file.write(data)
-
     data = re.split(r'(?:[?!\n]|(?<!\d)\.(?!\d))', data)
     # TODO
     # exclude alphabet numbering from split
 
-    with open(f'cleaned_{filename}2.txt', 'w') as file:
+    with open(f'cleaned_{filename}.txt', 'w') as file:
         for el in data:
 
             # TODO
@@ -95,38 +114,11 @@ def datacleaner(data, filename):
                 # write line to txt
                 file.write(f"{el.lstrip()}\n")
 
-
-def datasplitter(filename):
-
-    txtfile = open(f'cleaned_{filename}.txt', 'r')
-    lines = txtfile.readlines()
-
-    for idx, line in enumerate(lines):
-
-        # line is not judul bab, dll
-        if (not line.isupper() and not isnumbering(line)):
-
-            pos = re.search('(\.\s[^\S\r\n]*\w)', line)
-            # if line contains more than one sentence
-            if (pos != None):
-                l = line[:pos.start() + 1]
-                r = line[pos.start() + 1:].lstrip()
-
-                lines[idx] = line[:pos.start()]
-
-
-def isnumbering(str):
-    res = re.match(('^([0-9]|[a-z]|[A-Z]){1}\.\s*'), str)
-
-    if (res != None):
-        return True
-    return False
-
-
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
 
-filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 
-text = pdfparser(filename)
-datacleaner(text, filename)
+# filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+# filename2 = 'Draft Perbup SPBE 2021 Revisi.pdf'
+
+# (instansi, judul) = pdfparser(filename2)
