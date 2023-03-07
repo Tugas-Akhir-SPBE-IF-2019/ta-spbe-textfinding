@@ -1,3 +1,7 @@
+# this code is for DOKUMEN BUKTI BARU
+# the code below will convert it from pdf into readable data
+# resulting in txt file where each line can be seen as separate entities, to further be processed for text finding
+
 import sys
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
@@ -31,25 +35,18 @@ def pdfparser(data):
         retstr.truncate(0)
         # retstr.seek(0)
 
-        # print(page)
-        # print(data)
-        # print(pageNumber)
-
         if (startfound == False):
             if (pageNumber == page_no_title):
                 # get nama instansi
                 instansi = re.split('(?i)peraturan', data)[0]
-                # print(instansi)
 
                 # get starting point for judul
                 peraturan = re.split('(?i)(peraturan)', data)[1]
                 data = re.split('(?i)(peraturan)', data)[2]
-                # print(data)
 
                 # get judul
                 judul = peraturan + re.split('(?i)(dengan rahmat)', data)[0]
                 judul = " ".join(judul.split())
-                # print(judul)
 
             # get starting point for isi dokumen bukti
             startingPoint = re.search('(?i)(bab I)', data)
@@ -65,12 +62,7 @@ def pdfparser(data):
         else:
             fulltext += data
 
-    # print(fulltext)
-
     return (fulltext)
-
-# if __name__ == '__main__':
-#     pdfparser(sys.argv[1])
 
 
 def datacleaner(data, filename):
@@ -90,21 +82,18 @@ def datacleaner(data, filename):
     data = re.split(r'(?:[?!\n]|(?<!\d)\.(?!\d))', data)
     # TODO
     # exclude alphabet numbering from split
-    # '[.]\s{1}'
-    # (?:[?!:;\n]|(?<!\d|(\n[a-z])|(\n[A-Z]))\.(?!\d[0-9]))
 
     with open(f'cleaned_{filename}2.txt', 'w') as file:
         for el in data:
-            print(el)
-            print('\n')
+
+            # TODO
+            # how to remove 'empty' line from reading image, table, etc
 
             # check if not 'empty' line
             if (re.fullmatch('^(?:\s*(atau|dan)?\s?([0-9]+|[a-z]{1,2}))', el) is None):
                 # remove leading whitespace and add newline
                 # write line to txt
                 file.write(f"{el.lstrip()}\n")
-
-    # datasplitter(filename)
 
 
 def datasplitter(filename):
@@ -113,24 +102,17 @@ def datasplitter(filename):
     lines = txtfile.readlines()
 
     for idx, line in enumerate(lines):
-        # print("Line{}: {}".format(idx, line.strip()))
 
         # line is not judul bab, dll
         if (not line.isupper() and not isnumbering(line)):
-            print("Line{}: {}".format(idx, line.strip()))
 
             pos = re.search('(\.\s[^\S\r\n]*\w)', line)
             # if line contains more than one sentence
             if (pos != None):
-                print(lines[idx])
                 l = line[:pos.start() + 1]
                 r = line[pos.start() + 1:].lstrip()
 
-                print(l)
-                print(r)
                 lines[idx] = line[:pos.start()]
-
-            # sample_str.endswith('t')
 
 
 def isnumbering(str):
@@ -141,8 +123,10 @@ def isnumbering(str):
     return False
 
 
-file = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
-file2 = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+# if __name__ == '__main__':
+#     pdfparser(sys.argv[1])
 
-text = pdfparser(file2)
-datacleaner(text, file2)
+filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+
+text = pdfparser(filename)
+datacleaner(text, filename)
