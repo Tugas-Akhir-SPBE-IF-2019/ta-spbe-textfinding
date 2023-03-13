@@ -15,6 +15,7 @@ def txtreader(filename, lv, keyword):
     idx = 0
     result = []
 
+    # TODO
     # exclude some words
     lvl2_exclude = ['audit']
 
