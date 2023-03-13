@@ -33,7 +33,7 @@ def pdfparser(data):
         if (pageNumber == page_no_title):
             # get nama instansi
             instansi = re.split('(?i)peraturan', data)[0]
-            instansi = datacleaner(instansi)
+            instansi = stringcleaner(instansi)
 
             # get starting point for judul
             peraturan = re.split('(?i)(peraturan)', data)[1]
@@ -43,14 +43,14 @@ def pdfparser(data):
             judul = peraturan + re.split('(?i)(dengan rahmat)', data)[0]
             judul = " ".join(judul.split())
             judul = re.split('(?i)(menimbang)', judul)[0]
-            judul = datacleaner(judul)
+            judul = stringcleaner(judul)
 
         break
 
     return (instansi, judul)
 
 
-def datacleaner(data):
+def stringcleaner(data):
     codec = 'utf-8'
 
     # clean whitespace and undefined texts
