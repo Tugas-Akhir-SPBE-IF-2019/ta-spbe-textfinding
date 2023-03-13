@@ -84,7 +84,7 @@ def pdfparser(filename):
     # clean data and write to txt
     datacleaner(fulltext, filename)
 
-    return (instansi, judul)
+    return (stringcleaner(instansi), stringcleaner(judul))
 
 
 def datacleaner(data, filename):
@@ -99,8 +99,10 @@ def datacleaner(data, filename):
     data = re.sub(r'(\n)+', '', data, flags=re.MULTILINE)
 
     data = re.split(r'(?:[?!\n]|(?<!\d)\.(?!\d))', data)
+
     # TODO
     # exclude alphabet numbering from split
+    # ada regex ini (?:[?!\n]|(?<!\d|[a-z]|[A-Z])\.(?!\d|[a-z]|[A-Z])) tapi masih blm berhasil
 
     with open(f'cleaned_{filename}.txt', 'w') as file:
         for el in data:
@@ -113,6 +115,21 @@ def datacleaner(data, filename):
                 # remove leading whitespace and add newline
                 # write line to txt
                 file.write(f"{el.lstrip()}\n")
+
+
+def stringcleaner(data):
+    codec = 'utf-8'
+
+    # clean whitespace and undefined texts
+    data = re.sub(r'\x00+', '', data)
+    data = re.sub(r'\n{3,}', '', data)
+    data = re.sub(r'\n{2,3}', '', data)
+    data = re.sub(r'(\n\s+)+\n', '', data, flags=re.MULTILINE)
+
+    data = re.sub(r'(\s)+', ' ', data, flags=re.MULTILINE)
+    data = re.sub(r'(\n)+', '', data, flags=re.MULTILINE)
+
+    return data.strip()
 
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
