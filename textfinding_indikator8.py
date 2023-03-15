@@ -75,13 +75,12 @@ def ceklvl(filename):
     for el in res2_3:
         list_final.append(el[1])
     
-    lvl4 = ['keterhubungan', 
-            'hubung', 
-            'integrasi', 
-            'berpedoman', 
-            'reviu', 
-            'diselaraskan', 
-            'perubahan']
+    lvl4 = ['setiap opd', 
+           'seluruh opd', 
+           'setiap unit kerja', 
+           'seluruh unit kerja', 
+           'setiap pemerintah daerah',
+           'seluruh pemerintah daerah']
     res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
