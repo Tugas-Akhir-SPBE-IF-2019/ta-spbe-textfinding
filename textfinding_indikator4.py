@@ -16,8 +16,6 @@ def txtreader(filename, lv, keyword):
     result = []
 
     include = ['aplikasi', 'aplikasi khusus', 'aplikasi umum', 'aplikasi spbe']
-    exclude = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
-               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
 
     # read line by line from txt
     for line in file:
@@ -36,14 +34,8 @@ def txtreader(filename, lv, keyword):
                         ele in line.lower())]
                     if (res):
 
-                        found = False
                         # exclude words
-                        for ele in exclude:
-                            if found == True:
-                                break
-                            if re.search(ele, line, re.IGNORECASE):
-                                found = True
-                        if (not found):
+                        if (not excludewords(line)):
                             result.append([idx, line])
                             keyword.remove(key)
 
@@ -62,13 +54,8 @@ def txtreader(filename, lv, keyword):
                 res = [ele for ele in include if (
                     ele in line.lower())]
                 if (res):
-                    found = False
-                    for ele in exclude:
-                        if found == True:
-                            break
-                        if re.search(ele, line, re.IGNORECASE):
-                            found = True
-                    if (not found):
+
+                    if (not excludewords(line)):
                         result.append([idx, line])
 
         else:
@@ -77,13 +64,8 @@ def txtreader(filename, lv, keyword):
                 res = [ele for ele in include if (
                     ele in line.lower())]
                 if (res):
-                    found = False
-                    for ele in exclude:
-                        if found == True:
-                            break
-                        if re.search(ele, line, re.IGNORECASE):
-                            found = True
-                    if (not found):
+
+                    if (not excludewords(line)):
                         result.append([idx, line])
 
         idx += 1
@@ -94,6 +76,22 @@ def txtreader(filename, lv, keyword):
 
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
+
+def excludewords(line):
+    # TODO
+    # need better lines of code to exclude words
+
+    exclude = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
+               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
+    found = False
+
+    for ele in exclude:
+        if found == True:
+            break
+        if re.search(ele, line, re.IGNORECASE):
+            found = True
+    return found
+
 
 def ceklvl(filename):
     list_final = []
