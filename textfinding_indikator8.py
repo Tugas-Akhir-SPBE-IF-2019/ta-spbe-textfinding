@@ -73,7 +73,8 @@ def ceklvl(filename):
     res2_3 = txtreader(filename, 2, lvl2_3)
 
     for el in res2_3:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
     
     lvl4 = ['setiap opd', 
            'seluruh opd', 
@@ -84,7 +85,8 @@ def ceklvl(filename):
     res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
 
     text_final = ". ".join(list_final)
 
