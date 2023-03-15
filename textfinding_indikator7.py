@@ -18,13 +18,30 @@ def txtreader(filename, lv, keyword):
     # read line by line from txt
     for line in file:
 
-        # text finding goes straight to lvl 2 because all documents are lvl 1 by default
         if (lv == 2):
+            # check using 
+            reg = f'(?:(sistem)?\s?(penghubung layanan))'
+            if re.search(reg, line, re.IGNORECASE):
+                result.append([idx, line])
+
+        if (lv == 3):
             # check using 
             for key in keyword:
 
                 reg = f'{key}'
                 if re.search(reg, line, re.IGNORECASE):
+                    result.append([idx, line])
+        
+        else:  # lv == 4
+
+            # TODO 
+            # this still doesn't feel right to me; subject for later change
+            reg = f'(?:(sistem)?\s?(penghubung layanan))'
+
+            if (re.search(reg, line, re.IGNORECASE)):
+                # check if line contains any keyword from list
+                res = [ele for ele in keyword if (ele in line)]
+                if (res):
                     result.append([idx, line])
 
         idx += 1
@@ -43,7 +60,8 @@ def ceklvl(filename):
     list_final = []
     text_final = ''
 
-    lvl2 = ["sistem penghubung layanan", "penghubung layanan"]
+    # empty keywords; the check will use built in regex in txtreader function
+    lvl2 = []
     res2 = txtreader(filename, 2, lvl2)
 
     # check if keyword lvl2 is not found, then return as empty string
@@ -51,6 +69,31 @@ def ceklvl(filename):
         return ''
 
     for el in res2:
+        list_final.append(el[1])
+    
+    # TODO
+    # this can be optimized by using regex
+    lvl3 = ['setiap opd', 
+           'seluruh opd', 
+           'setiap unit kerja', 
+           'seluruh unit kerja', 
+           'setiap pemerintah daerah',
+           'seluruh pemerintah daerah']
+    res3 = txtreader(filename, 3, lvl3)
+
+    for el in res3:
+        list_final.append(el[1])
+
+    lvl4 = ['keterhubungan', 
+            'hubung', 
+            'integrasi', 
+            'berpedoman', 
+            'reviu', 
+            'diselaraskan', 
+            'perubahan']
+    res4 = txtreader(filename, 4, lvl4)
+
+    for el in res4:
         list_final.append(el[1])
 
     text_final = ". ".join(list_final)
