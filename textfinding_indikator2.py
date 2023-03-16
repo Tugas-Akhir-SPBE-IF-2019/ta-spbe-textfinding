@@ -23,15 +23,29 @@ def txtreader(filename, lv, keyword):
                 result.append([idx, line])
 
         elif (lv == 2):
-            for key in keyword:
+            # Check primary words first:
+            # 1. "Peta Rencana SPBE"
+            # 2. "Rencana Strategis"
+            reg1 = f'(?:(peta)\s+(rencana)\s+(spbe))'
+            reg2 = f'(?:(rencana)\s+(strategis))'
 
-                if re.search(key, line, re.IGNORECASE):
+            if (re.search(reg1, line, re.IGNORECASE) or re.search(reg2, line, re.IGNORECASE)):
+                # Use regex to handle multiple whitespaces
+                res = [ele for ele in keyword if (re.search(ele, line, re.IGNORECASE))]
+                if (res):
                     result.append([idx, line])
 
         else:  # lv == 4
-            res = [ele for ele in keyword if (ele in line)]
-            if (res):
-                result.append([idx, line])
+            # Check primary words first:
+            # 1. "Peta Rencana SPBE Nasional"
+            # 2. "Rencana Induk SPBE Nasional"
+            reg1 = f'(?:(peta)\s+(rencana)\s+(spbe)\s+(nasional))'
+            reg2 = f'(?:(rencana)\s+(induk)\s+(spbe)\s+(nasional))'
+
+            if (re.search(reg1, line, re.IGNORECASE) or re.search(reg2, line, re.IGNORECASE)):
+                res = [ele for ele in keyword if (ele in line)]
+                if (res):
+                    result.append([idx, line])
 
         idx += 1
 
@@ -53,9 +67,15 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
-    lvl2 = ["Tata Kelola SPBE", "Manajemen SPBE", "Layanan SPBE", "Infrastruktur SPBE", "Aplikasi SPBE", "Keamanan SPBE", "Audit Teknologi Informasi dan Komunikasi", "Audit TIK"]
+    # Regex keywords to handle multiple whitespaces
+    lvl2 = [f"(?:(Tata)\s+(Kelola)\s+(SPBE))", f"(?:(Manajemen)\s+(SPBE))",
+            f"(?:(Layanan)\s+(SPBE))", f"(?:(Infrastruktur)\s+(SPBE))",
+            f"(?:(Aplikasi)\s+(SPBE))", f"(?:(Keamanan)\s+(SPBE))",
+            f"(?:(Audit)\s+(Teknologi)\s+(Informasi)\s+(dan)\s+(Komunikasi))",
+            f"(?:(Audit)\s+(TIK))"]
     res2 = txtreader(filename, 2, lvl2)
 
+    # Terminate immediately if no Level 2 Keywords found
     if (not res2):
         return ''
 
@@ -78,12 +98,12 @@ def ceklvl(filename):
     return text_final
 
 
-# filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 # filename = 'Draft Perbup SPBE 2021 Revisi.pdf'
-filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+# filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
 
-(instansibaru, judulbaru) = dokbaru.pdfparser(filename)
-(instansilama, judullama) = doklama.pdfparser(filename)
+# (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
+# (instansilama, judullama) = doklama.pdfparser(filename)
 teks_final = ceklvl(filename)
 
 # hasil text finding
