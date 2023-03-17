@@ -15,8 +15,6 @@ def txtreader(filename, lv, keyword):
     idx = 0
     result = []
 
-    include = ['aplikasi', 'aplikasi khusus', 'aplikasi umum', 'aplikasi spbe']
-
     # read line by line from txt
     for line in file:
 
@@ -29,10 +27,9 @@ def txtreader(filename, lv, keyword):
             for key in keyword:
                 if re.search(key, line, re.IGNORECASE):
 
-                    # include words
-                    res = [ele for ele in include if (
-                        ele in line.lower())]
-                    if (res):
+                    # to include ['aplikasi', 'aplikasi khusus', 'aplikasi umum', 'aplikasi spbe']
+                    reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
+                    if re.search(reg, line, re.IGNORECASE):
 
                         # exclude words
                         if (not excludewords(line)):
@@ -42,18 +39,16 @@ def txtreader(filename, lv, keyword):
         elif (lv == 3):
             for key in keyword:
                 if re.search(key, line, re.IGNORECASE):
-                    res = [ele for ele in include if (
-                        ele in line.lower())]
-                    if (res):
+                    reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
+                    if re.search(reg, line, re.IGNORECASE):
                         result.append([idx, line])
                         keyword.remove(key)
 
         elif (lv == 4):
             res = [ele for ele in keyword if (ele in line)]
             if (len(res) == len(keyword)):  # if all keyword is found in the same sentence
-                res = [ele for ele in include if (
-                    ele in line.lower())]
-                if (res):
+                reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
+                if re.search(reg, line, re.IGNORECASE):
                     if (not excludewords(line)):
                         result.append([idx, line])
 
