@@ -73,8 +73,8 @@ def ceklvl(filename):
     if (not res1):
         return text_final
 
-    lvl2 = ["Proses Bisnis", "Data dan Informasi", "Infrastruktur SPBE",
-            "Aplikasi SPBE", "Keamanan SPBE", "Layanan SPBE"]
+    lvl2 = ["(proses)\s+(bisnis)", "(data)\s+(dan)\s+(informasi)", "(infrastruktur)\s+(spbe)",
+            "(aplikasi)\s+(spbe)", "(keamanan)\s+(spbe)", "(layanan)\s+(spbe)"]
     res2, keyword = txtreader(filename, 2, lvl2)
 
     if (not res2):
