@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from cleaner import *
 
 
 def txtreader(filename, lv, keyword):
@@ -33,14 +34,15 @@ def txtreader(filename, lv, keyword):
 
         elif (lv == 3):
             # masih pengecekan keyword yg sama dgn level 2, tapi tanpa 'domain'
-            for key in keyword:
+            for key in list(keyword):
+                if key in keyword:
 
-                # gausah regex krn searching nya langsung kata keyword tanpa ada embel embel 'domain'
-                if re.search(reg, line, re.IGNORECASE):
-                    result.append([idx, line])
+                    # gausah regex krn searching nya langsung kata keyword tanpa ada embel embel 'domain'
+                    if re.search(reg, line, re.IGNORECASE):
+                        result.append([idx, line])
 
-                    # hapus key yg udh ditemuin supaya gausah di search lagi
-                    keyword.remove(key)
+                        # hapus key yg udh ditemuin supaya gausah di search lagi
+                        keyword.remove(key)
 
         else:  # lv == 4
             # cek dulu keyword utama level 4 which is arsitektur spbe nasional
@@ -67,7 +69,7 @@ def ceklvl(filename):
     text_final = ''
 
     lvl1 = ["arsitektur SPBE"]
-    res1, keyword = txtreader(filename, 1, lvl1)
+    res1, remaining = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -75,7 +77,7 @@ def ceklvl(filename):
 
     lvl2 = ["(proses)\s+(bisnis)", "(data)\s+(dan)\s+(informasi)", "(infrastruktur)\s+(spbe)",
             "(aplikasi)\s+(spbe)", "(keamanan)\s+(spbe)", "(layanan)\s+(spbe)"]
-    res2, keyword = txtreader(filename, 2, lvl2)
+    res2, remaining = txtreader(filename, 2, lvl2)
 
     if (not res2):
         res2 = txtreader(filename, 3, lvl2)
@@ -85,11 +87,11 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
-    if (keyword):
+    if (remaining):
         return cleantext(list_final)
 
     lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
-    res4, keyword = txtreader(filename, 4, lvl4)
+    res4, remaining = txtreader(filename, 4, lvl4)
 
     if (not res4):
         return cleantext(list_final)
@@ -99,16 +101,6 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     return cleantext(list_final)
-
-
-def cleantext(list_final):
-    text_final = ". ".join(list_final)
-
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
 
 
 filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
