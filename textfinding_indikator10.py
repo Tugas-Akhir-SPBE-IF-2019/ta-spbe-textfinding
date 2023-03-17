@@ -10,8 +10,7 @@ def txtreader(filename, lv, keyword):
     # func to search keyword in txt file
 
     # open txt file
-    # file = open(f'cleaned_{filename}.txt', 'r')
-    file = open(f'New Text Document.txt', 'r')
+    file = open(f'cleaned_{filename}.txt', 'r')
 
     idx = 0
     result = []
@@ -38,10 +37,12 @@ def txtreader(filename, lv, keyword):
                             keyword.remove(key)
 
         elif (lv == 4):
-            reg = f'(?:(tim)\s+(koordinasi)\s+(spbe)\s+(nasional))'
+            reg = f'(?:(tim)\s+(koordinasi))'
             if re.search(reg, line, re.IGNORECASE):
-                if (not excludewords(line)):
-                    result.append([idx, line])
+                res = [ele for ele in keyword if (ele in line)]
+                if (res):
+                    if (not excludewords(line)):
+                        result.append([idx, line])
 
         else:  # lvl 5
             res = [ele for ele in keyword if (ele in line)]
@@ -92,11 +93,19 @@ def ceklvl(filename):
     lvl2 = ['tugas']
     res2 = txtreader(filename, 2, lvl2)
 
+    if (not res2):
+        return cleantext(list_final)
+
     for el in res2:
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    res4 = txtreader(filename, 4, [])
+    lvl4 = ["integrasi", "diselaraskan", "berpedoman",
+            "perubahan", "koordinasi", "(kerja)\s+(sama)"]
+    res4 = txtreader(filename, 4, lvl4)
+
+    if (not res4):
+        return cleantext(list_final)
 
     for el in res4:
         if (el[1] not in list_final):
@@ -109,6 +118,10 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
+    return cleantext(list_final)
+
+
+def cleantext(list_final):
     text_final = ". ".join(list_final)
 
     # clean text
