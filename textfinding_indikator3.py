@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from utility import convert_keywords, exclude_words
 
 
 def txtreader(filename, lv, keyword):
@@ -32,7 +33,10 @@ def txtreader(filename, lv, keyword):
             if (re.search(reg1, line, re.IGNORECASE) or re.search(reg2, line, re.IGNORECASE)):
                 # Use regex to handle multiple whitespaces
                 res = [ele for ele in keyword if (re.search(ele, line, re.IGNORECASE))]
-                if (res and not excludewords(line)):
+                exclude_keywords = ["sistem", "domain", "aplikasi"]
+
+                if (res and not exclude_words(exclude_keywords, line)):
+                # if (res):
                     result.append([idx, line])
 
         else:  # lv == 5
@@ -53,23 +57,12 @@ def txtreader(filename, lv, keyword):
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
 
-def excludewords(line):
-    exclude = ["sistem", "domain", "aplikasi"]
-    found = False
-
-    for ele in exclude:
-        if found:
-            break
-        if (ele in line.lower()):
-            found = True
-    return found
-
 def ceklvl(filename):
     list_final = []
     text_final = ''
 
     # Same keyword for lvl1 and lvl2
-    lvl1 = ["manajemen data"]
+    lvl1 = convert_keywords(["Manajemen Data"])
     res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
@@ -80,9 +73,11 @@ def ceklvl(filename):
     list_final.append(res1[0][1])
 
     # Same keyword for lvl3 and lvl4
-    lvl3 = [f"(?:(Arsitektur)\s+(Data))",f"(?:(Data)\s+(Induk))",
-            f"(?:(Data)\s+(Referensi))", f"(?:(Basis)\s+(Data))",
-            f"(?:(Kualitas)\s+(Data))", f"(?:(Interoperabilitas)\s+(Data)?)"]
+    lvl3 = convert_keywords([
+        "Arsitektur Data", "Data Induk", "Data Referensi",
+        "Basis Data", "Kualitas Data", "Interoperabilitas Data",
+        "Interoperabilitas"
+    ])
     res3 = txtreader(filename, 3, lvl3)
 
     # Return result for level 2 if no Level 3 Keywords found
