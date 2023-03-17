@@ -1,4 +1,4 @@
-# this code is for TEXT FINDING - INDIKATOR 5
+# this code is for TEXT FINDING - INDIKATOR 6
 # input is txt file from preprocess dokumen lama, nama instansi & judul from dokumen lama & baru
 
 import re
@@ -7,39 +7,35 @@ import preprocess_doklama as doklama
 
 
 def txtreader(filename, lv, keyword):
-    # func to search keyword in txt file
 
-    # open txt file
     file = open(f'cleaned_{filename}.txt', 'r')
 
     idx = 0
     result = []
 
-    # read line by line from txt
     for line in file:
 
-        if (lv == 2):
-            # check using 
-            reg = f'(?:\s?(jaringan intra))'
-            if re.search(reg, line, re.IGNORECASE):
+        if (lv == 1):
+            reg1 = f'(?:\s?(jaringan intra))'
+            reg2 = f'(?:\s?(jaringan lokal))'
+
+            if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 result.append([idx, line])
 
-        if (lv == 3):
-            # check using 
-            for key in keyword:
+        if (lv == 2 or lv == 3):
+            reg1 = f'(?:\s?(jaringan intra))'
+            reg2 = f'(?:\s?(jaringan lokal))'
 
-                reg = f'{key}'
-                if re.search(reg, line, re.IGNORECASE):
+            if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
+                res = [ele for ele in keyword if (re.search(ele, line.lower(), re.IGNORECASE))]
+                if (res):
                     result.append([idx, line])
-        
-        else:  # lv == 4
 
-            # TODO 
-            # this still doesn't feel right to me; subject for later change
-            reg = f'(?:\s?(jaringan intra))'
+        else:
+            reg1 = f'(?:\s?(jaringan intra))'
+            reg2 = f'(?:\s?(jaringan lokal))'
 
-            if (re.search(reg, line, re.IGNORECASE)):
-                # check if line contains any keyword from list
+            if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 res = [ele for ele in keyword if (ele in line)]
                 if (res):
                     result.append([idx, line])
@@ -49,52 +45,50 @@ def txtreader(filename, lv, keyword):
     file.close()
     return (result)
 
-
-# if __name__ == '__main__':
-#     pdfparser(sys.argv[1])
-
-
-# for indicator 7, ceklvl will only check against lvl2 keywords only
-# because the rest are related to lvl2 and will be checked in the next step (text similarity)
 def ceklvl(filename):
     list_final = []
     text_final = ''
 
-    # empty keywords; the check will use built in regex in txtreader function
-    lvl2 = []
-    res2 = txtreader(filename, 2, lvl2)
+    lvl1 = []
+    res1 = txtreader(filename, 1, lvl1)
 
-    # check if keyword lvl2 is not found, then return as empty string
-    if (not res2):
+    if (not res1):
         return ''
 
+    lvl2 = ['organisasi perangkat daerah', 'opd', 'unit kerja', 'pemerintah daerah', 'perangkat daerah']
+    res2 = txtreader(filename, 2, lvl2)
+
     for el in res2:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
     
-    # TODO
-    # this can be optimized by using regex
     lvl3 = ['setiap opd', 
            'seluruh opd', 
            'setiap unit kerja', 
            'seluruh unit kerja', 
            'setiap pemerintah daerah',
-           'seluruh pemerintah daerah']
+           'seluruh pemerintah daerah',
+           'seluruh Perangkat Daerah']
     res3 = txtreader(filename, 3, lvl3)
 
     for el in res3:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
 
-    lvl4 = ['keterhubungan', 
-            'hubung', 
+    lvl4 = ['hubung', 
+            'sambung',
             'integrasi', 
             'berpedoman', 
             'reviu', 
             'diselaraskan', 
-            'perubahan']
+            'perubahan', 
+            'interkoneksi', 
+            'periodik']
     res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
 
     text_final = ". ".join(list_final)
 
@@ -104,9 +98,10 @@ def ceklvl(filename):
 
     return text_final
 
-
-filename = 'PhakPhakBarat.pdf'
-# filename = 'BatuBara.pdf'
+# filename = 'PhakPhakBarat.pdf'
+filename = 'BatuBara.pdf'
+# filename = 'lamongan.pdf'
+# filename = 'lamongan-dokumen-lama.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
@@ -114,7 +109,8 @@ filename = 'PhakPhakBarat.pdf'
 teks_final = ceklvl(filename)
 
 # hasil text finding
-# bisa langsung digunakan ke model text similarity
 print("\nTeks:\n", teks_final, "\n")
-# print(instansibaru, judulbaru)
-# print(instansilama, judullama)
+# print("\nInstansi Baru:\n", instansibaru, "\n")
+# print("\nJudul Baru:\n", judulbaru, "\n")
+# print("\nInstansi Lama:\n", instansilama, "\n")
+# print("\nJudul Lama:\n", judullama, "\n")
