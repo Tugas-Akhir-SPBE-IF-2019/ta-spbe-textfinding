@@ -4,7 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
-from utility import convert_keywords
+from utility import *
 
 
 def txtreader(filename, lv, keyword):
@@ -92,13 +92,7 @@ def ceklvl(filename):
     for el in res4:
         list_final.append(el[1])
 
-    text_final = ". ".join(list_final)
-
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
+    return clean_text(list_final)
 
 
 # filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
