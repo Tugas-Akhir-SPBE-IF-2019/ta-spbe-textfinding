@@ -109,13 +109,13 @@ def ceklvl(filename):
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
     if (keyword):
-        return ". ".join(list_final)
+        return cleantext(list_final)
 
     lvl3 = ["konsultasi", "koordinasi"]
     res3, keyword = txtreader(filename, 3, lvl3)
 
     if (not res3):
-        return ". ".join(list_final)
+        return cleantext(list_final)
 
     for el in res3:
         if (el[1] not in list_final):
@@ -125,7 +125,7 @@ def ceklvl(filename):
     res4, keyword = txtreader(filename, 4, lvl4)
 
     if (not res4):
-        return ". ".join(list_final)
+        return cleantext(list_final)
 
     for el in res4:
         if (el[1] not in list_final):
@@ -138,6 +138,10 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
+    return cleantext(list_final)
+
+
+def cleantext(list_final):
     text_final = ". ".join(list_final)
 
     # clean text

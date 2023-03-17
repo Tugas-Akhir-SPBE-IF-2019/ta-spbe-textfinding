@@ -15,10 +15,6 @@ def txtreader(filename, lv, keyword):
     idx = 0
     result = []
 
-    # TODO
-    # exclude some words
-    lvl2_exclude = ['audit']
-
     # read line by line from txt
     for line in file:
 
@@ -48,10 +44,10 @@ def txtreader(filename, lv, keyword):
 
         else:  # lv == 4
             # cek dulu keyword utama level 4 which is arsitektur spbe nasional
-            word = "Arsitektur SPBE Nasional"
+            reg = f'(?:(arsitektur)/s+(spbe)\s+(nasional))'
 
             # kalau ketemu, lanjut cek keyword [integrasi, reviu, dll]
-            if (re.search(word, line, re.IGNORECASE)):
+            if (re.search(reg, line, re.IGNORECASE)):
                 # check if line contains any keyword from list
                 res = [ele for ele in keyword if (ele in line)]
                 if (res):
@@ -60,7 +56,7 @@ def txtreader(filename, lv, keyword):
         idx += 1
 
     file.close()
-    return (result)
+    return (result, keyword)
 
 
 # if __name__ == '__main__':
@@ -71,7 +67,7 @@ def ceklvl(filename):
     text_final = ''
 
     lvl1 = ["arsitektur SPBE"]
-    res1 = txtreader(filename, 1, lvl1)
+    res1, keyword = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -79,7 +75,7 @@ def ceklvl(filename):
 
     lvl2 = ["Proses Bisnis", "Data dan Informasi", "Infrastruktur SPBE",
             "Aplikasi SPBE", "Keamanan SPBE", "Layanan SPBE"]
-    res2 = txtreader(filename, 2, lvl2)
+    res2, keyword = txtreader(filename, 2, lvl2)
 
     if (not res2):
         res2 = txtreader(filename, 3, lvl2)
@@ -88,13 +84,24 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
+    # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
+    if (keyword):
+        return cleantext(list_final)
+
     lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
-    res4 = txtreader(filename, 4, lvl4)
+    res4, keyword = txtreader(filename, 4, lvl4)
+
+    if (not res4):
+        return cleantext(list_final)
 
     for el in res4:
         if (el[1] not in list_final):
             list_final.append(el[1])
 
+    return cleantext(list_final)
+
+
+def cleantext(list_final):
     text_final = ". ".join(list_final)
 
     # clean text
