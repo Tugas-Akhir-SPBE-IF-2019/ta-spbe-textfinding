@@ -24,17 +24,18 @@ def txtreader(filename, lv, keyword):
                 result.append([idx, line])
 
         elif (lv == 2):
-            for key in keyword:
-                if re.search(key, line, re.IGNORECASE):
+            for key in list(keyword):
+                if key in keyword:
+                    if re.search(key, line, re.IGNORECASE):
 
-                    # include words
-                    reg = f'(?:(tim)\s+(koordinasi)\s+(spbe)?)'
-                    if re.search(reg, line, re.IGNORECASE):
+                        # include words
+                        reg = f'(?:(tim)\s+(koordinasi)\s+(spbe)?)'
+                        if re.search(reg, line, re.IGNORECASE):
 
-                        # exclude words
-                        if (not excludewords(line)):
-                            result.append([idx, line])
-                            keyword.remove(key)
+                            # exclude words
+                            if (not excludewords(line)):
+                                result.append([idx, line])
+                                keyword.remove(key)
 
         elif (lv == 4):
             reg = f'(?:(tim)\s+(koordinasi))'
@@ -119,16 +120,6 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     return cleantext(list_final)
-
-
-def cleantext(list_final):
-    text_final = ". ".join(list_final)
-
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
 
 
 filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
