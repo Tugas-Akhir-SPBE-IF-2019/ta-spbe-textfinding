@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from utility import convert_keywords
 
 
 def txtreader(filename, lv, keyword):
@@ -60,7 +61,7 @@ def ceklvl(filename):
     list_final = []
     text_final = ''
 
-    lvl1 = ["Peta Rencana SPBE"]
+    lvl1 = convert_keywords(["Peta Rencana SPBE"])
     res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
@@ -68,11 +69,13 @@ def ceklvl(filename):
         return ''
 
     # Regex keywords to handle multiple whitespaces
-    lvl2 = [f"(?:(Tata)\s+(Kelola)\s+(SPBE))", f"(?:(Manajemen)\s+(SPBE))",
-            f"(?:(Layanan)\s+(SPBE))", f"(?:(Infrastruktur)\s+(SPBE))",
-            f"(?:(Aplikasi)\s+(SPBE))", f"(?:(Keamanan)\s+(SPBE))",
-            f"(?:(Audit)\s+(Teknologi)\s+(Informasi)\s+(dan)\s+(Komunikasi))",
-            f"(?:(Audit)\s+(TIK))"]
+    lvl2 = convert_keywords([
+        "Tata Kelola SPBE", "Manajemen SPBE",
+        "Layanan SPBE", "Infrastruktur SPBE",
+        "Aplikasi SPBE", "Keamanan SPBE",
+        "Audit Teknologi Informasi dan Komunikasi",
+        "Audit TIK"
+    ])
     res2 = txtreader(filename, 2, lvl2)
 
     # Terminate immediately if no Level 2 Keywords found
@@ -98,9 +101,9 @@ def ceklvl(filename):
     return text_final
 
 
-filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+# filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 # filename = 'Draft Perbup SPBE 2021 Revisi.pdf'
-# filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
 
 # (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 # (instansilama, judullama) = doklama.pdfparser(filename)
