@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from cleaner import *
 
 
 def txtreader(filename, lv, keyword):
