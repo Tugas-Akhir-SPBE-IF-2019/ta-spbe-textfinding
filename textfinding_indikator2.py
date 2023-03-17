@@ -59,7 +59,6 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     lvl1 = convert_keywords(["Peta Rencana SPBE"])
     res1 = txtreader(filename, 1, lvl1)
