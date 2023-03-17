@@ -1,10 +1,10 @@
-# this code is for TEXT FINDING - INDIKATOR 1
+# this code is for TEXT FINDING - INDIKATOR 3
 # input is txt file from preprocess dokumen lama, nama instansi & judul from dokumen lama & baru
 
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
-from utility import convert_keywords, exclude_words
+from utility import *
 
 
 def txtreader(filename, lv, keyword):
@@ -59,7 +59,6 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     # Same keyword for lvl1 and lvl2
     lvl1 = convert_keywords(["Manajemen Data"])
@@ -82,10 +81,7 @@ def ceklvl(filename):
 
     # Return result for level 2 if no Level 3 Keywords found
     if (not res3):
-        text_final = ". ".join(list_final)
-        text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-        text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-        return text_final
+        return clean_text(list_final)
 
     for el in res3:
         if (el[1] not in list_final):
@@ -98,14 +94,8 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    text_final = ". ".join(list_final)
-
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
     # return text_final
-    return text_final
+    return clean_text(list_final)
 
 
 # filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
