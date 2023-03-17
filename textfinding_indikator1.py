@@ -25,12 +25,14 @@ def txtreader(filename, lv, keyword):
 
         elif (lv == 2):
             # cek dgn keyword 'domain'. cont: domain arsitektur proses bisnis, domain data dan informasi, domain arsitektur keamanan, dll
-            for key in keyword:
+            for key in list(keyword):
+                if key in keyword:
 
-                # manfaatin regex untuk searching yg not only kata keyword
-                reg = f'(?:(domain)\s(arsitektur)?\s?({key}))'
-                if re.search(reg, line, re.IGNORECASE):
-                    result.append([idx, line])
+                    # manfaatin regex untuk searching yg not only kata keyword
+                    reg = f'(?:(domain)\s(arsitektur)?\s?({key}))'
+                    if re.search(reg, line, re.IGNORECASE):
+                        result.append([idx, line])
+                        keyword.remove(key)
 
         elif (lv == 3):
             # masih pengecekan keyword yg sama dgn level 2, tapi tanpa 'domain'
@@ -58,7 +60,7 @@ def txtreader(filename, lv, keyword):
         idx += 1
 
     file.close()
-    return (result, keyword)
+    return (result)
 
 
 # if __name__ == '__main__':
@@ -69,7 +71,7 @@ def ceklvl(filename):
     text_final = ''
 
     lvl1 = ["arsitektur SPBE"]
-    res1, remaining = txtreader(filename, 1, lvl1)
+    res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -77,7 +79,7 @@ def ceklvl(filename):
 
     lvl2 = ["(proses)\s+(bisnis)", "(data)\s+(dan)\s+(informasi)", "(infrastruktur)\s+(spbe)",
             "(aplikasi)\s+(spbe)", "(keamanan)\s+(spbe)", "(layanan)\s+(spbe)"]
-    res2, remaining = txtreader(filename, 2, lvl2)
+    res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
         res2 = txtreader(filename, 3, lvl2)
@@ -87,11 +89,11 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
-    if (remaining):
+    if (lvl2):
         return cleantext(list_final)
 
     lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
-    res4, remaining = txtreader(filename, 4, lvl4)
+    res4 = txtreader(filename, 4, lvl4)
 
     if (not res4):
         return cleantext(list_final)

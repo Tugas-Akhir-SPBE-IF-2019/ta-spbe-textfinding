@@ -66,7 +66,7 @@ def txtreader(filename, lv, keyword):
         idx += 1
 
     file.close()
-    return (result, keyword)
+    return (result)
 
 
 # if __name__ == '__main__':
@@ -92,7 +92,7 @@ def ceklvl(filename):
     list_final = []
     text_final = ''
 
-    res1, remaining = txtreader(filename, 1, [])
+    res1 = txtreader(filename, 1, [])
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -100,18 +100,18 @@ def ceklvl(filename):
 
     lvl2 = ["perencanaan", "analisis", "desain", "implementasi",
             "pemeliharaan"]
-    res2, remaining = txtreader(filename, 2, lvl2)
+    res2 = txtreader(filename, 2, lvl2)
 
     for el in res2:
         if (el[1] not in list_final):
             list_final.append(el[1])
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
-    if (remaining):
+    if (lvl2):
         return cleantext(list_final)
 
     lvl3 = ["konsultasi", "koordinasi"]
-    res3, remaining = txtreader(filename, 3, lvl3)
+    res3 = txtreader(filename, 3, lvl3)
 
     if (not res3):
         return cleantext(list_final)
@@ -121,7 +121,7 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     lvl4 = ["terpadu", "endali"]
-    res4, remaining = txtreader(filename, 4, lvl4)
+    res4 = txtreader(filename, 4, lvl4)
 
     if (not res4):
         return cleantext(list_final)
@@ -131,7 +131,7 @@ def ceklvl(filename):
             list_final.append(el[1])
 
     lvl5 = ["reviu"]
-    res5, remaining = txtreader(filename, 5, lvl4)
+    res5 = txtreader(filename, 5, lvl4)
 
     for el in res5:
         if (el[1] not in list_final):
