@@ -15,6 +15,7 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    initial_keys = list(keyword)
 
     # read line by line from txt
     for line in file:
@@ -34,15 +35,12 @@ def txtreader(filename, lv, keyword):
                 # Use regex to handle multiple whitespaces
                 exclude_keywords = ["sistem", "domain", "aplikasi"]
 
-                for key in list(keyword):
+                for key in initial_keys:
                     if (re.search(key, line, re.IGNORECASE) and not exclude_words(exclude_keywords, line)):
                         result.append([idx, line])
 
                         # Delete found key to prevent redundant search
-                        if ("Interoperabilitas" in key):
-                            # Remove both "Interoperabilitas" and "Interoperabilitas Data"
-                            keyword = keyword[:-2]
-                        else:
+                        if (key in keyword):
                             keyword.remove(key)
 
         else:  # lv == 5
@@ -57,7 +55,7 @@ def txtreader(filename, lv, keyword):
         idx += 1
 
     file.close()
-    return (result, keyword)
+    return result
 
 
 # if __name__ == '__main__':
@@ -68,7 +66,7 @@ def ceklvl(filename):
 
     # Same keyword for lvl1 and lvl2
     lvl1 = convert_keywords(["Manajemen Data"])
-    res1, remaining_keys = txtreader(filename, 1, lvl1)
+    res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -83,7 +81,7 @@ def ceklvl(filename):
         "Basis Data", "Kualitas Data", "Interoperabilitas Data",
         "Interoperabilitas"
     ])
-    res3, remaining_keys = txtreader(filename, 3, lvl3)
+    res3 = txtreader(filename, 3, lvl3)
 
     # Return result for level 2 if no Level 3 Keywords found
     if (not res3):
@@ -94,11 +92,11 @@ def ceklvl(filename):
             list_final.append(el[1])
     
     # Terminate immediately if not all Level 3 Keywords found
-    if (remaining_keys):
+    if not(len(lvl3) == 0 or (len(lvl3) == 1 and "Interoperabilitas" in lvl3[0])):
         return clean_text(list_final)
 
     lvl5 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "pedoman", "perubahan"]
-    res5, remaining_keys = txtreader(filename, 5, lvl5)
+    res5 = txtreader(filename, 5, lvl5)
 
     for el in res5:
         if (el[1] not in list_final):
