@@ -18,8 +18,21 @@ def convert_keywords(keywords):
 
         regex_keyword += ")"
         result.append(regex_keyword)
-
+    
     return result
+
+# Check if a word exist in a line
+# Input: Array of Excluded Keywords, Line
+# Output: Found/Not Found
+def exclude_words(exclude_keywords, line):
+    found = False
+
+    for ele in exclude_keywords:
+        if found:
+            break
+        if (ele in line.lower()):
+            found = True
+    return found
 
 # Clean collected lines and merge into a single paragraph
 # Input: Array of Lines
