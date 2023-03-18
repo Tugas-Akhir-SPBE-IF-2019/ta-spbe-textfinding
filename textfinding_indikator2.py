@@ -15,6 +15,7 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    initial_keywords = list(keyword)
 
     # read line by line from txt
     for line in file:
@@ -33,15 +34,12 @@ def txtreader(filename, lv, keyword):
             if (re.search(reg1, line, re.IGNORECASE) or re.search(reg2, line, re.IGNORECASE)):
                 # Use regex to handle multiple whitespaces
 
-                for key in list(keyword):
+                for key in initial_keywords:
                     if (re.search(key, line, re.IGNORECASE)):
                         result.append([idx, line])
 
                         # Delete found key to prevent redundant search
-                        if ("Audit" in key):
-                            # Remove both "Audit TIK" and "Audit Teknologi Informasi dan Komunikasi"
-                            keyword = keyword[:-2]
-                        else:
+                        if (key in keyword):
                             keyword.remove(key)
 
         else:  # lv == 4
@@ -59,7 +57,7 @@ def txtreader(filename, lv, keyword):
         idx += 1
 
     file.close()
-    return (result, keyword)
+    return result
 
 
 # if __name__ == '__main__':
@@ -69,7 +67,7 @@ def ceklvl(filename):
     list_final = []
 
     lvl1 = convert_keywords(["Peta Rencana SPBE"])
-    res1, remaining_keys = txtreader(filename, 1, lvl1)
+    res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
@@ -83,7 +81,7 @@ def ceklvl(filename):
         "Audit Teknologi Informasi dan Komunikasi",
         "Audit TIK"
     ])
-    res2, remaining_keys = txtreader(filename, 2, lvl2)
+    res2 = txtreader(filename, 2, lvl2)
 
     # Terminate immediately if no Level 2 Keywords found
     if (not res2):
@@ -94,11 +92,11 @@ def ceklvl(filename):
             list_final.append(el[1])
     
     # Terminate if not all Level 3 Keywords found
-    if (remaining_keys):
+    if not(len(lvl2) == 0 or (len(lvl2) == 1 and "Audit" in lvl2[0])):
         return clean_text(list_final)
 
     lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
-    res4, remaining_keys = txtreader(filename, 4, lvl4)
+    res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
         list_final.append(el[1])
