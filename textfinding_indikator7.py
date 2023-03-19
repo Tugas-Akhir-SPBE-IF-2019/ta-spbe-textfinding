@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from utility import *
 
 
 def txtreader(filename, lv, keyword):
@@ -20,29 +21,19 @@ def txtreader(filename, lv, keyword):
 
         if (lv == 2):
             # check using 
-            reg = f'(?:(sistem)?\s?(penghubung layanan))'
-            if re.search(reg, line, re.IGNORECASE):
-                result.append([idx, line])
-
-        if (lv == 3):
-            # check using 
             for key in keyword:
-
                 reg = f'{key}'
                 if re.search(reg, line, re.IGNORECASE):
                     result.append([idx, line])
         
-        else:  # lv == 4
-
-            # TODO 
-            # this still doesn't feel right to me; subject for later change
+        # lv 3 and 4 have the same logic to check for found text
+        elif (lv == 3 or lv == 4):
+            # check using main keyword first
             reg = f'(?:(sistem)?\s?(penghubung layanan))'
-
             if (re.search(reg, line, re.IGNORECASE)):
-                # check if line contains any keyword from list
-                res = [ele for ele in keyword if (ele in line)]
-                if (res):
-                    result.append([idx, line])
+                for key in keyword:
+                    if re.search(key, line, re.IGNORECASE):
+                        result.append([idx, line])
 
         idx += 1
 
@@ -58,10 +49,8 @@ def txtreader(filename, lv, keyword):
 # because the rest are related to lvl2 and will be checked in the next step (text similarity)
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
-    # empty keywords; the check will use built in regex in txtreader function
-    lvl2 = []
+    lvl2 = convert_keywords(['sistem penghubung layanan'])
     res2 = txtreader(filename, 2, lvl2)
 
     # check if keyword lvl2 is not found, then return as empty string
@@ -71,41 +60,41 @@ def ceklvl(filename):
     for el in res2:
         list_final.append(el[1])
     
-    # TODO
-    # this can be optimized by using regex
-    lvl3 = ['setiap opd', 
-           'seluruh opd', 
-           'setiap unit kerja', 
-           'seluruh unit kerja', 
-           'setiap pemerintah daerah',
-           'seluruh pemerintah daerah']
+    lvl3 = convert_keywords([
+        'seluruh opd', 
+        'setiap opd'
+        'seluruh unit kerja', 
+        'setiap unit kerja'
+        'seluruh pemerintah daerah',
+        'setiap pemerintah daerah'])
     res3 = txtreader(filename, 3, lvl3)
 
-    for el in res3:
-        list_final.append(el[1])
+    #immediately return if no result is found for lvl3
+    if (not res3):
+        return clean_text(list_final)
 
-    lvl4 = ['keterhubungan', 
+    for el in res3:
+        if (el[1] not in list_final):
+            list_final.append(el[1])
+
+    lvl4 = convert_keywords(['keterhubungan', 
             'hubung', 
             'integrasi', 
             'berpedoman', 
             'reviu', 
             'diselaraskan', 
-            'perubahan']
+            'perubahan'])
     res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
 
-    text_final = ". ".join(list_final)
-
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
+    return clean_text(list_final)
 
 
-filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
+# filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
@@ -113,5 +102,4 @@ filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
 teks_final = ceklvl(filename)
 
 # hasil text finding
-# bisa langsung digunakan ke model text similarity
 print(teks_final)
