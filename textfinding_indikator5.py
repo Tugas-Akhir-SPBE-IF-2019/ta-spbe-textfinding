@@ -4,7 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
-
+from utility import *
 
 def txtreader(filename, lv, keyword):
 
@@ -16,9 +16,6 @@ def txtreader(filename, lv, keyword):
     for line in file:
 
         if (lv == 1):
-            # if re.search(keyword[0], line, re.IGNORECASE):
-            #     result.append([idx, line])
-            # reg1 = f'(?:(layanan)?\s?(pusat data nasional))'
             reg1 = f'(?:(layanan)?\s?(pusat data))'
             reg2 = f'(?:(pusat)?\s?(data center))'
 
@@ -31,9 +28,9 @@ def txtreader(filename, lv, keyword):
             reg2 = f'(?:(pusat)?\s?(data center))'
 
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
-                res = [ele for ele in keyword if (re.search(ele, line.lower(), re.IGNORECASE))]
-                if (res):
-                    result.append([idx, line])
+                for key in keyword:
+                    if re.search(key, line.lower(), re.IGNORECASE):
+                        result.append([idx, line])
 
         else:
             reg1 = f'(?:(layanan)?\s?(pusat data))'
@@ -51,7 +48,6 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     lvl1 = []
     res1 = txtreader(filename, 1, lvl1)
@@ -59,27 +55,35 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
-    lvl2 = ['organisasi perangkat daerah', 'opd', 'unit kerja', 'pemerintah daerah', 'perangkat daerah']
+    lvl2 = convert_keywords([
+        'organisasi perangkat daerah', 
+        'opd', 
+        'unit kerja', 
+        'pemerintah daerah', 
+        'perangkat daerah'])
     res2 = txtreader(filename, 2, lvl2)
 
     for el in res2:
         if (el[1] not in list_final):
             list_final.append(el[1])
     
-    lvl3 = ['setiap opd', 
+    lvl3 = convert_keywords(['setiap opd', 
            'seluruh opd', 
            'setiap unit kerja', 
            'seluruh unit kerja', 
            'setiap pemerintah daerah',
            'seluruh pemerintah daerah',
-           'seluruh Perangkat Daerah']
+           'seluruh Perangkat Daerah'])
     res3 = txtreader(filename, 3, lvl3)
+
+    if (not res3):
+        return clean_text(list_final)
 
     for el in res3:
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    lvl4 = ['hubung', 
+    lvl4 = convert_keywords(['hubung', 
             'sambung',
             'integrasi', 
             'berpedoman', 
@@ -87,25 +91,20 @@ def ceklvl(filename):
             'diselaraskan', 
             'perubahan', 
             'interkoneksi', 
-            'periodik']
+            'periodik'])
     res4 = txtreader(filename, 4, lvl4)
 
     for el in res4:
+        print("P")
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    text_final = ". ".join(list_final)
+    return clean_text(list_final)
 
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
-
-# filename = 'PhakPhakBarat.pdf'
+filename = 'PhakPhakBarat.pdf'
 # filename = 'BatuBara.pdf'
 # filename = 'lamongan.pdf'
-filename = 'lamongan-dokumen-lama.pdf'
+# filename = 'lamongan-dokumen-lama.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
@@ -118,5 +117,3 @@ print("\nTeks:\n", teks_final, "\n")
 # print("\nJudul Baru:\n", judulbaru, "\n")
 # print("\nInstansi Lama:\n", instansilama, "\n")
 # print("\nJudul Lama:\n", judullama, "\n")
-
-# Batu Bar
