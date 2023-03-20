@@ -29,7 +29,7 @@ def txtreader(filename, lv, keyword):
         # lv 3 and 4 have the same logic to check for found text
         elif (lv == 3 or lv == 4):
             # check using main keyword first
-            reg = f'(?:(sistem)?\s?(penghubung layanan))'
+            reg = f'(?:(sistem)\s*(penghubung)\s*(layanan))'
             if (re.search(reg, line, re.IGNORECASE)):
                 for key in keyword:
                     if re.search(key, line, re.IGNORECASE):
