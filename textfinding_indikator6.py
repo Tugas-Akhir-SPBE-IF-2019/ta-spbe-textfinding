@@ -22,18 +22,11 @@ def txtreader(filename, lv, keyword):
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 result.append([idx, line])
 
-        if (lv == 2 or lv == 3):
+        else:
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 for key in keyword:
                     if re.search(key, line.lower(), re.IGNORECASE):
                         result.append([idx, line])
-
-        else:
-            if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
-                res = [ele for ele in keyword if (ele in line)]
-                if (res):
-                    result.append([idx, line])
-
         idx += 1
 
     file.close()
@@ -57,7 +50,7 @@ def ceklvl(filename):
     res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
-        return clean_text(list_final)
+        return ''
 
     for el in res2:
         if (el[1] not in list_final):
