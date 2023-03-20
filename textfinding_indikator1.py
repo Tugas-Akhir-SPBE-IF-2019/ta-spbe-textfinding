@@ -4,7 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
-from cleaner import *
+from utility import *
 
 
 def txtreader(filename, lv, keyword):
@@ -90,19 +90,19 @@ def ceklvl(filename):
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
     if (lvl2):
-        return cleantext(list_final)
+        return clean_text(list_final)
 
     lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
     res4 = txtreader(filename, 4, lvl4)
 
     if (not res4):
-        return cleantext(list_final)
+        return clean_text(list_final)
 
     for el in res4:
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    return cleantext(list_final)
+    return clean_text(list_final)
 
 
 filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
