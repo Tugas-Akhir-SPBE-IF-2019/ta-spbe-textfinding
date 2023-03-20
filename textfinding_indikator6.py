@@ -13,28 +13,22 @@ def txtreader(filename, lv, keyword):
     idx = 0
     result = []
 
+    reg1 = f'(?:\s?((jaringan)\s*(intra)))'
+    reg2 = f'(?:\s?((jaringan)\s*(lokal)))'
+
     for line in file:
 
         if (lv == 1):
-            reg1 = f'(?:\s?(jaringan intra))'
-            reg2 = f'(?:\s?(jaringan lokal))'
-
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 result.append([idx, line])
 
         if (lv == 2 or lv == 3):
-            reg1 = f'(?:\s?(jaringan intra))'
-            reg2 = f'(?:\s?(jaringan lokal))'
-
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 for key in keyword:
                     if re.search(key, line.lower(), re.IGNORECASE):
                         result.append([idx, line])
 
         else:
-            reg1 = f'(?:\s?(jaringan intra))'
-            reg2 = f'(?:\s?(jaringan lokal))'
-
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
                 res = [ele for ele in keyword if (ele in line)]
                 if (res):
@@ -61,6 +55,9 @@ def ceklvl(filename):
         'pemerintah daerah', 
         'perangkat daerah'])
     res2 = txtreader(filename, 2, lvl2)
+
+    if (not res2):
+        return clean_text(list_final)
 
     for el in res2:
         if (el[1] not in list_final):
@@ -99,10 +96,10 @@ def ceklvl(filename):
 
     return clean_text(list_final)
 
-filename = 'PhakPhakBarat.pdf'
+# filename = 'PhakPhakBarat.pdf'
 # filename = 'BatuBara.pdf'
 # filename = 'lamongan.pdf'
-# filename = 'lamongan-dokumen-lama.pdf'
+filename = 'lamongan-dokumen-lama.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
