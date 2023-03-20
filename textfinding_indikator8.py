@@ -17,6 +17,8 @@ def txtreader(filename, lv, keyword):
     result = []
     initial_keys = list(keyword)
 
+    #regex for primary word
+    reg = f'(?:(manajemen)\s*(keamanan)\s*(informasi))'
     # read line by line from txt
     for line in file:
 
@@ -29,8 +31,6 @@ def txtreader(filename, lv, keyword):
 
         elif (lv == 3):
             # Check primary word first:
-            reg = f'(?:(manajemen)\s+(keamanan)\s+(informasi))'
-
             if (re.search(reg, line, re.IGNORECASE)):
                 for key in initial_keys:
                     if (re.search(key, line, re.IGNORECASE)):
@@ -41,8 +41,7 @@ def txtreader(filename, lv, keyword):
                             keyword.remove(key)
         
         else: #lv 4
-            reg = f'(?:(manajemen)\s+(keamanan)\s+(informasi))'
-
+            # Check primary word first:
             if (re.search(reg, line, re.IGNORECASE)):
                 # check if line contains any keyword from list
                 for key in keyword:
