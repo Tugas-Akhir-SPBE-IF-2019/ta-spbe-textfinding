@@ -50,7 +50,8 @@ def ceklvl(filename):
     res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
-        return res1
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
 
     for el in res2:
         if (el[1] not in list_final):

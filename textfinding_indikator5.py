@@ -50,7 +50,8 @@ def ceklvl(filename):
     res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
-        return res1
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
 
     for el in res2:
         if (el[1] not in list_final):
@@ -89,10 +90,10 @@ def ceklvl(filename):
 
     return clean_text(list_final)
 
-# filename = 'PhakPhakBarat.pdf'
+filename = 'PhakPhakBarat.pdf'
 # filename = 'BatuBara.pdf'
 # filename = 'lamongan.pdf'
-filename = 'lamongan-dokumen-lama.pdf'
+# filename = 'lamongan-dokumen-lama.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
