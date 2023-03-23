@@ -67,9 +67,6 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
-    for el in res1:
-        list_final.append(el[1])
-
     # keywords for level 2 and 3 are the same
     lvl2_3 = convert_keywords(['penetapan ruang lingkup', 
               'penetapan penanggung jawab', 
@@ -78,6 +75,10 @@ def ceklvl(filename):
               'evaluasi kinerja',
               'perbaikan berkelanjutan terhadap Keamanan Informasi'])
     res2_3 = txtreader(filename, 3, lvl2_3)
+
+    if not(res2_3):
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
 
     for el in res2_3:
         if (el[1] not in list_final):
