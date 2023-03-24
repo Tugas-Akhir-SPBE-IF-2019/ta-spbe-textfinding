@@ -15,6 +15,7 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    init_keywords = list(keyword)
 
     # read line by line from txt
     for line in file:
@@ -25,22 +26,22 @@ def txtreader(filename, lv, keyword):
 
         elif (lv == 2):
             # cek dgn keyword 'domain'. cont: domain arsitektur proses bisnis, domain data dan informasi, domain arsitektur keamanan, dll
-            for key in list(keyword):
+            for key in init_keyword:
                 if key in keyword:
 
                     # manfaatin regex untuk searching yg not only kata keyword
-                    reg = f'(?:(domain)\s(arsitektur)?\s?({key}))'
+                    reg = f'(?:(domain)\s+(arsitektur)?\s?({key}))'
                     if re.search(reg, line, re.IGNORECASE):
                         result.append([idx, line])
                         keyword.remove(key)
 
         elif (lv == 3):
             # masih pengecekan keyword yg sama dgn level 2, tapi tanpa 'domain'
-            for key in list(keyword):
+            for key in init_keyword:
                 if key in keyword:
 
                     # gausah regex krn searching nya langsung kata keyword tanpa ada embel embel 'domain'
-                    if re.search(reg, line, re.IGNORECASE):
+                    if re.search(key, line, re.IGNORECASE):
                         result.append([idx, line])
 
                         # hapus key yg udh ditemuin supaya gausah di search lagi
@@ -70,15 +71,15 @@ def ceklvl(filename):
     list_final = []
     text_final = ''
 
-    lvl1 = ["arsitektur SPBE"]
+    lvl1 = convert_keywords(["Arsitektur SPBE"])
     res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
         return text_final
 
-    lvl2 = ["(proses)\s+(bisnis)", "(data)\s+(dan)\s+(informasi)", "(infrastruktur)\s+(spbe)",
-            "(aplikasi)\s+(spbe)", "(keamanan)\s+(spbe)", "(layanan)\s+(spbe)"]
+    lvl2 = convert_keywords(["Proses Bisnis", "Data dan Informasi", "Infrastruktur SPBE",
+            "Aplikasi SPBE", "Keamanan SPBE", "Layanan SPBE"])
     res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
@@ -92,7 +93,7 @@ def ceklvl(filename):
     if (lvl2):
         return clean_text(list_final)
 
-    lvl4 = ["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"]
+    lvl4 = convert_keywords(["integrasi", "reviu", "diselaraskan", "berpedoman", "perubahan"])
     res4 = txtreader(filename, 4, lvl4)
 
     if (not res4):
@@ -105,7 +106,7 @@ def ceklvl(filename):
     return clean_text(list_final)
 
 
-filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
 # filename2 = 'Draft Perbup SPBE 2021 Revisi.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)

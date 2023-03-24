@@ -15,6 +15,9 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    init_keyword = list(keyword)
+    exclude_keywords = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
+               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
 
     # read line by line from txt
     for line in file:
@@ -25,22 +28,19 @@ def txtreader(filename, lv, keyword):
                 result.append([idx, line])
 
         elif (lv == 2):
-            for key in list(keyword):  # create a duplicate list
+            for key in init_keyword:  # create a duplicate list
                 if key in keyword:  # check if element in iteration exist in otiginal list, skip element if not exist
                     if re.search(key, line, re.IGNORECASE):
 
                         # to include ['aplikasi', 'aplikasi khusus', 'aplikasi umum', 'aplikasi spbe']
                         reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
-                        if re.search(reg, line, re.IGNORECASE):
-
-                            # exclude words
-                            if (not excludewords(line)):
-                                result.append([idx, line])
-                                # remove element in original list
-                                keyword.remove(key)
+                        if (re.search(reg, line, re.IGNORECASE) and not exclude_words(exclude_keywords, line)):
+                            result.append([idx, line])
+                            # remove element in original list
+                            keyword.remove(key)
 
         elif (lv == 3):
-            for key in list(keyword):
+            for key in init_keyword:
                 if key in keyword:
                     if re.search(key, line, re.IGNORECASE):
                         reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
@@ -52,40 +52,19 @@ def txtreader(filename, lv, keyword):
             res = [ele for ele in keyword if (ele in line)]
             if (len(res) == len(keyword)):  # if all keyword is found in the same sentence
                 reg = f'(?:(aplikasi)\s+[(umum)|(khusus)|(spbe)]?)'
-                if re.search(reg, line, re.IGNORECASE):
-                    if (not excludewords(line)):
-                        result.append([idx, line])
+                if (re.search(reg, line, re.IGNORECASE) and not exclude_words(exclude_keywords, line)):
+                    result.append([idx, line])
 
         else:
             reg = f'(?:(aplikasi)\s+(spbe))'
             if (re.search(reg, line.lower(), re.IGNORECASE)):
-                if (re.search(keyword[0], line.lower(), re.IGNORECASE)):
-                    if (not excludewords(line)):
-                        result.append([idx, line])
+                if (re.search(keyword[0], line.lower(), re.IGNORECASE) and not exclude_words(exclude_keywords, line)):
+                    result.append([idx, line])
 
         idx += 1
 
     file.close()
     return (result)
-
-
-# if __name__ == '__main__':
-#     pdfparser(sys.argv[1])
-
-def excludewords(line):
-    # TODO
-    # need better lines of code to exclude words
-
-    exclude = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
-               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
-    found = False
-
-    for ele in exclude:
-        if found == True:
-            break
-        if re.search(ele, line, re.IGNORECASE):
-            found = True
-    return found
 
 
 def ceklvl(filename):
@@ -140,7 +119,7 @@ def ceklvl(filename):
     return clean_text(list_final)
 
 
-filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
 # filename2 = 'Draft Perbup SPBE 2021 Revisi.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
