@@ -15,6 +15,9 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    exclude_keywords = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
+               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
+    init_keywords = list(keyword)
 
     # read line by line from txt
     for line in file:
@@ -25,25 +28,22 @@ def txtreader(filename, lv, keyword):
                 result.append([idx, line])
 
         elif (lv == 2):
-            for key in list(keyword):
+            for key in init_keywords:
                 if key in keyword:
                     if re.search(key, line, re.IGNORECASE):
 
                         # include words
                         reg = f'(?:(tim)\s+(koordinasi)\s+(spbe)?)'
-                        if re.search(reg, line, re.IGNORECASE):
-
-                            # exclude words
-                            if (not excludewords(line)):
-                                result.append([idx, line])
-                                keyword.remove(key)
+                        if (re.search(reg, line, re.IGNORECASE) and not exclude_words(exclude_keywords, line)):
+                            result.append([idx, line])
+                            keyword.remove(key)
 
         elif (lv == 4):
             reg = f'(?:(tim)\s+(koordinasi))'
             if re.search(reg, line, re.IGNORECASE):
                 res = [ele for ele in keyword if (ele in line)]
                 if (res):
-                    if (not excludewords(line)):
+                    if (not exclude_words(exclude_keywords, line)):
                         result.append([idx, line])
 
         else:  # lvl 5
@@ -51,32 +51,13 @@ def txtreader(filename, lv, keyword):
             if (res):
                 reg = f'(?:(tim)\s+(koordinasi)\s+(spbe)?)'
                 if re.search(reg, line, re.IGNORECASE):
-                    if (not excludewords(line)):
+                    if (not exclude_words(exclude_keywords, line)):
                         result.append([idx, line])
 
         idx += 1
 
     file.close()
     return (result)
-
-
-# if __name__ == '__main__':
-#     pdfparser(sys.argv[1])
-
-def excludewords(line):
-    # TODO
-    # need better lines of code to exclude words
-
-    exclude = ['badan', 'anggaran', 'belanja', 'TIK', 'manajemen', 'fungsi',
-               'infrastruktur', 'interoperabilitas', 'rencana induk', 'program', 'pelayanan']
-    found = False
-
-    for ele in exclude:
-        if found == True:
-            break
-        if re.search(ele, line, re.IGNORECASE):
-            found = True
-    return found
 
 
 def ceklvl(filename):
@@ -102,8 +83,8 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
-    lvl4 = ["integrasi", "diselaraskan", "berpedoman",
-            "perubahan", "koordinasi", "(kerja)\s+(sama)"]
+    lvl4 = convert_keywords(["integrasi", "diselaraskan", "berpedoman",
+            "perubahan", "koordinasi", "kerja sama"])
     res4 = txtreader(filename, 4, lvl4)
 
     if (not res4):
@@ -123,7 +104,7 @@ def ceklvl(filename):
     return clean_text(list_final)
 
 
-filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
 # filename2 = 'Draft Perbup SPBE 2021 Revisi.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
