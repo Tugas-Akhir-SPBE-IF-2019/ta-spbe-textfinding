@@ -72,9 +72,6 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
-    # Add first line found containing "manajemen data" to list_final for level 2
-    list_final.append(res1[0][1])
-
     # Same keyword for lvl3 and lvl4
     lvl3 = convert_keywords([
         "Arsitektur Data", "Data Induk", "Data Referensi",
@@ -85,6 +82,8 @@ def ceklvl(filename):
 
     # Return result for level 2 if no Level 3 Keywords found
     if (not res3):
+        # Add first line found containing "manajemen data" to list_final for level 2
+        list_final.append(res1[0][1])
         return clean_text(list_final)
 
     for el in res3:
