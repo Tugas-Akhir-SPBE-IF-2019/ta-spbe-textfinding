@@ -70,8 +70,6 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
-    list_final.append(res1[0][1])
-
     # TODO
     # add setiap opd, etc
 
@@ -79,6 +77,7 @@ def ceklvl(filename):
     res2 = txtreader(filename, 2, lvl2)
 
     if (not res2):
+        list_final.append(res1[0][1])
         return clean_text(list_final)
 
     for el in res2:
