@@ -15,7 +15,7 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
-    init_keywords = list(keyword)
+    init_keyword = list(keyword)
 
     # read line by line from txt
     for line in file:
@@ -49,7 +49,7 @@ def txtreader(filename, lv, keyword):
 
         else:  # lv == 4
             # cek dulu keyword utama level 4 which is arsitektur spbe nasional
-            reg = f'(?:(arsitektur)/s+(spbe)\s+(nasional))'
+            reg = f'(?:(arsitektur)\s+(spbe)\s+(nasional))'
 
             # kalau ketemu, lanjut cek keyword [integrasi, reviu, dll]
             if (re.search(reg, line, re.IGNORECASE)):
@@ -77,6 +77,8 @@ def ceklvl(filename):
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
         return text_final
+
+    list_final.append(res1[0][1])
 
     lvl2 = convert_keywords(["Proses Bisnis", "Data dan Informasi", "Infrastruktur SPBE",
             "Aplikasi SPBE", "Keamanan SPBE", "Layanan SPBE"])
