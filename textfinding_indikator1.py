@@ -78,8 +78,6 @@ def ceklvl(filename):
     if (not res1):
         return text_final
 
-    list_final.append(res1[0][1])
-
     lvl2 = convert_keywords(["Proses Bisnis", "Data dan Informasi", "Infrastruktur SPBE",
             "Aplikasi SPBE", "Keamanan SPBE", "Layanan SPBE"])
     res2 = txtreader(filename, 2, lvl2)
@@ -90,6 +88,10 @@ def ceklvl(filename):
     for el in res2:
         if (el[1] not in list_final):
             list_final.append(el[1])
+
+    if (not res2):
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
 
     # if lvl2 tdk terpenuhi (not all keyword found), end pengecekan lvl
     if (lvl2):
