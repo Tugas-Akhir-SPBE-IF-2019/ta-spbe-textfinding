@@ -70,6 +70,8 @@ def ceklvl(filename):
     if (not res1):
         return ''
 
+    list_final.append(res1[0][1])
+
     # TODO
     # add setiap opd, etc
 
