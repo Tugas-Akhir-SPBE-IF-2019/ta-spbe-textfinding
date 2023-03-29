@@ -85,7 +85,9 @@ def ceklvl(filename):
 
     # Terminate immediately if no Level 2 Keywords found
     if (not res2):
-        return ''
+        # Add first line found containing "peta rencana spbe" to list_final for level 2
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
 
     for el in res2:
         if (el[1] not in list_final):
