@@ -4,6 +4,7 @@
 import re
 import preprocess_dokbaru as dokbaru
 import preprocess_doklama as doklama
+from utility import *
 
 
 def txtreader(filename, lv, keyword):
@@ -53,21 +54,23 @@ def ceklvl(filename):
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return ''
+        return text_final
 
-    lvl2 = ["Infrastruktur SPBE", "Aplikasi SPBE", "Keamanan SPBE"]
+    lvl2 = convert_keywords(
+        ["Infrastruktur SPBE", "Aplikasi SPBE", "Keamanan SPBE"])
     res2 = txtreader(filename, 2, lvl2)
 
+    if (not res2):
+        list_final.append(res1[0][1])
+        return clean_text(list_final)
+
     for el in res2:
-        list_final.append(el[1])
+        if (el[1] not in list_final):
+            list_final.append(el[1])
 
     text_final = ". ".join(list_final)
 
-    # clean text
-    text_final = re.sub(r'(\n)+', '', text_final, flags=re.MULTILINE)
-    text_final = re.sub(r'(;)+', ',', text_final, flags=re.MULTILINE)
-
-    return text_final
+    return clean_text(list_final)
 
 
 filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
