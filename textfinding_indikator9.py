@@ -33,8 +33,6 @@ def txtreader(filename, lv, keyword):
                 reg = f'(?:(audit)\s({key}))'
                 if (re.search(reg, line, re.IGNORECASE)):
                     result.append([idx, line])
-                    # hapus key yg udh ditemuin supaya gausah di search lagi
-                    keyword.remove(key)
 
         idx += 1
 
