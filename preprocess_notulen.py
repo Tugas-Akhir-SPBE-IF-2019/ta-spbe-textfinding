@@ -32,13 +32,30 @@ def pdfparser(data):
 
         if (pageNumber == page_no_title):
             # get perihal dokumen
-            perihal = re.split('(?i)perihal', data)[1]
-            perihal = stringcleaner(perihal)
+            # perihal = re.split('(?i)perihal', data)
+            # print(len(perihal))
+            # perihal = perihal[1]
+            # perihal = stringcleaner(perihal)
+
+            try:
+                perihal = re.split('(?i)perihal', data)
+                perihal = perihal[1]
+            except Exception as e:
+                print("The error is: ", e)
+                perihal = ''
+            else:
+                perihal = stringcleaner(perihal)
 
             # if perihal is generalized
             if (perihal.lower() in ['undangan', 'notulensi', 'notulen']):
-                perihal = re.split('(?i)keperluan', data)[1]
-                perihal = stringcleaner(perihal)
+                try:
+                    perihal = re.split('(?i)keperluan', data)
+                    perihal = perihal[1]
+                except Exception as e:
+                    print("The error is: ", e)
+                    perihal = ''
+                else:
+                    perihal = stringcleaner(perihal)
 
         break
 
@@ -62,6 +79,7 @@ def stringcleaner(data):
 #     pdfparser(sys.argv[1])
 
 filename = 'Nota Dinas.pdf'
+filename2 = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 
-perihal = pdfparser(filename)
+perihal = pdfparser(filename2)
 print(perihal)
