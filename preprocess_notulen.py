@@ -32,11 +32,6 @@ def pdfparser(data):
 
         if (pageNumber == page_no_title):
             # get perihal dokumen
-            # perihal = re.split('(?i)perihal', data)
-            # print(len(perihal))
-            # perihal = perihal[1]
-            # perihal = stringcleaner(perihal)
-
             try:
                 perihal = re.split('(?i)perihal', data)
                 perihal = perihal[1]
