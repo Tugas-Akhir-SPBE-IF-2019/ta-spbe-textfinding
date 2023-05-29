@@ -8,6 +8,7 @@ from pdfminer.converter import XMLConverter, HTMLConverter, TextConverter
 from pdfminer.layout import LAParams
 import io
 import re
+import os
 
 
 def pdfparser(data):
@@ -32,20 +33,33 @@ def pdfparser(data):
 
         if (pageNumber == page_no_title):
             # get nama instansi
-            instansi = re.split('(?i)peraturan', data)[0]
-            instansi = stringcleaner(instansi)
+            try:
+                instansi = re.split('(?i)peraturan', data)
+                instansi = instansi[0]
+            except Exception as e:
+                print("The error is: ", e)
+                instansi = ''
+            else:
+                instansi = stringcleaner(instansi)
 
             # get starting point for judul
-            peraturan = re.split('(?i)(peraturan)', data)[1]
-            data = re.split('(?i)(peraturan)', data)[2]
+            try:
+                peraturan = re.split('(?i)(peraturan)', data)[1]
+                data = re.split('(?i)(peraturan)', data)[2]
 
-            # get judul
-            judul = peraturan + re.split('(?i)(dengan rahmat)', data)[0]
-            judul = " ".join(judul.split())
-            judul = re.split('(?i)(menimbang)', judul)[0]
-            judul = stringcleaner(judul)
+                # get judul
+                judul = peraturan + re.split('(?i)(dengan rahmat)', data)[0]
+                judul = " ".join(judul.split())
+                judul = re.split('(?i)(menimbang)', judul)[0]
+            except Exception as e:
+                print("The error is: ", e)
 
-        break
+                # get judul from filename
+                judul = os.path.basename(fp.name)
+            else:
+                judul = stringcleaner(judul)
+
+            break
 
     return (instansi, judul)
 
@@ -68,8 +82,13 @@ def stringcleaner(data):
 # if __name__ == '__main__':
 #     pdfparser(sys.argv[1])
 
-# filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+filename2 = 'Nota Dinas.pdf'
+filename3 = 'karawang.pdf'
+filename4 = 'Palangkaraya.pdf'
+filename5 = 'salatiga.pdf'
+filename6 = 'TANGGAMUS.pdf'
 
-# (instansi, judul) = pdfparser(filename)
-# print(instansi)
-# print(judul)
+(instansi, judul) = pdfparser(filename4)
+print(instansi)
+print(judul)

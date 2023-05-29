@@ -32,11 +32,6 @@ def pdfparser(data):
 
         if (pageNumber == page_no_title):
             # get perihal dokumen
-            # perihal = re.split('(?i)perihal', data)
-            # print(len(perihal))
-            # perihal = perihal[1]
-            # perihal = stringcleaner(perihal)
-
             try:
                 perihal = re.split('(?i)perihal', data)
                 perihal = perihal[1]
@@ -80,6 +75,10 @@ def stringcleaner(data):
 
 filename = 'Nota Dinas.pdf'
 filename2 = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+filename3 = 'karawang.pdf'
+filename4 = 'Palangkaraya.pdf'
+filename5 = 'salatiga.pdf'
+filename6 = 'TANGGAMUS.pdf'
 
-perihal = pdfparser(filename2)
+perihal = pdfparser(filename4)
 print(perihal)
