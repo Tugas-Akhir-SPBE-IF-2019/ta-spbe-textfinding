@@ -75,10 +75,6 @@ def stringcleaner(data):
 
 filename = 'Nota Dinas.pdf'
 filename2 = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
-filename3 = 'karawang.pdf'
-filename4 = 'Palangkaraya.pdf'
-filename5 = 'salatiga.pdf'
-filename6 = 'TANGGAMUS.pdf'
 
-perihal = pdfparser(filename4)
+perihal = pdfparser(filename2)
 print(perihal)
