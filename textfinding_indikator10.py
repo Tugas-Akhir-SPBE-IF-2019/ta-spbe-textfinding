@@ -68,7 +68,7 @@ def ceklvl(filename):
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return ''
+        return text_final
 
     # TODO
     # add setiap opd, etc
