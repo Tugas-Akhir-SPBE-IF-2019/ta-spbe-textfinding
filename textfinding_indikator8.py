@@ -60,14 +60,13 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     lvl1 = convert_keywords(["manajemen keamanan informasi"])
     res1 = txtreader(filename, 1, lvl1)
 
     # check if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return text_final
+        return ''
 
     # keywords for level 2 and 3 are the same
     lvl2_3 = convert_keywords(['penetapan ruang lingkup', 
@@ -102,8 +101,6 @@ def ceklvl(filename):
     for el in res4:
         if (el[1] not in list_final):
             list_final.append(el[1])
-
-    text_final = ". ".join(list_final)
 
     return clean_text(list_final)
 
