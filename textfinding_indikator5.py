@@ -12,6 +12,7 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    init_keywords = list(keyword)
     
     reg1 = f'(?:(layanan)?\s*?((pusat)\s*(data)))'
     reg2 = f'(?:(pusat)?\s*?((data)\s*(center)))'
@@ -23,9 +24,11 @@ def txtreader(filename, lv, keyword):
 
         else:
             if (re.search(reg1, line.lower(), re.IGNORECASE) or re.search(reg2, line.lower(), re.IGNORECASE)):
-                for key in keyword:
-                    if re.search(key, line.lower(), re.IGNORECASE):
-                        result.append([idx, line])
+                for key in init_keywords:
+                    if (key in keyword):
+                        if re.search(key, line.lower(), re.IGNORECASE):
+                            result.append([idx, line])
+                            keyword.remove(key)
 
         idx += 1
 
@@ -90,10 +93,11 @@ def ceklvl(filename):
 
     return clean_text(list_final)
 
-filename = 'PhakPhakBarat.pdf'
+# filename = 'PhakPhakBarat.pdf'
 # filename = 'BatuBara.pdf'
 # filename = 'lamongan.pdf'
 # filename = 'lamongan-dokumen-lama.pdf'
+filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
