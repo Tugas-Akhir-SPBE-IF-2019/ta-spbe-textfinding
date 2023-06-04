@@ -62,13 +62,12 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     res1 = txtreader(filename, 1, [])
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return text_final
+        return ''
 
     # TODO
     # add setiap opd, etc
