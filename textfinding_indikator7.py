@@ -54,14 +54,13 @@ def txtreader(filename, lv, keyword):
 # because the rest are related to lvl2 and will be checked in the next step (text similarity)
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     lvl2 = convert_keywords(['sistem penghubung layanan'])
     res2 = txtreader(filename, 2, lvl2)
 
     # check if keyword lvl2 is not found, then return as empty string
     if (not res2):
-        return text_final
+        return ''
 
     for el in res2:
         list_final.append(el[1])
@@ -95,8 +94,6 @@ def ceklvl(filename):
     for el in res4:
         if (el[1] not in list_final):
             list_final.append(el[1])
-
-    text_final = ". ".join(list_final)
 
     return clean_text(list_final)
 
