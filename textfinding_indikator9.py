@@ -15,24 +15,28 @@ def txtreader(filename, lv, keyword):
 
     idx = 0
     result = []
+    init_keyword = list(keyword)
 
     # read line by line from txt
     for line in file:
 
         if (lv == 1):
-            for key in keyword:
-                reg = f'(?:(audit)\s({key}))'
-                if (re.search(reg, line, re.IGNORECASE)):
-                    result.append([idx, line])
+            for key in init_keyword:
+                if key in keyword:
+                    reg = f'(?:(audit)\s({key}))'
+                    if (re.search(reg, line, re.IGNORECASE)):
+                        result.append([idx, line])
+                        keyword.remove(key)
 
         else:  # lv == 2
             # cek dgn keyword 'audit'
-            for key in keyword:
-
-                # manfaatin regex untuk searching yg not only kata keyword
-                reg = f'(?:(audit)\s({key}))'
-                if (re.search(reg, line, re.IGNORECASE)):
-                    result.append([idx, line])
+            for key in init_keyword:
+                if key in keyword:
+                    # manfaatin regex untuk searching yg not only kata keyword
+                    reg = f'(?:(audit)\s({key}))'
+                    if (re.search(reg, line, re.IGNORECASE)):
+                        result.append([idx, line])
+                        keyword.remove(key)
 
         idx += 1
 
