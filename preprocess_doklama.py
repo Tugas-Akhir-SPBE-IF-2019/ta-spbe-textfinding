@@ -89,6 +89,6 @@ filename4 = 'Palangkaraya.pdf'
 filename5 = 'salatiga.pdf'
 filename6 = 'TANGGAMUS.pdf'
 
-(instansi, judul) = pdfparser(filename4)
-print(instansi)
-print(judul)
+# (instansi, judul) = pdfparser(filename4)
+# print(instansi)
+# print(judul)
