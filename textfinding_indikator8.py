@@ -24,29 +24,30 @@ def txtreader(filename, lv, keyword):
 
         if (lv == 1):
             # check using 
-            for key in keyword:
-
-                if re.search(key, line, re.IGNORECASE):
-                    result.append([idx, line])
+            for key in initial_keys:
+                if (key in keyword):
+                    if re.search(key, line, re.IGNORECASE):
+                        result.append([idx, line])
+                        keyword.remove(key)
 
         elif (lv == 3):
             # Check primary word first:
             if (re.search(reg, line, re.IGNORECASE)):
                 for key in initial_keys:
-                    if (re.search(key, line, re.IGNORECASE)):
-                        result.append([idx, line])
-
-                        # Delete found key
-                        if (key in keyword):
+                    if (key in keyword):
+                        if (re.search(key, line, re.IGNORECASE)):
+                            result.append([idx, line])
                             keyword.remove(key)
         
         else: #lv 4
             # Check primary word first:
             if (re.search(reg, line, re.IGNORECASE)):
                 # check if line contains any keyword from list
-                for key in keyword:
-                    if (re.search(key, line, re.IGNORECASE)):
-                        result.append([idx, line])
+                for key in initial_keys:
+                    if (key in keyword):
+                        if (re.search(key, line, re.IGNORECASE)):
+                            result.append([idx, line])
+                            keyword.remove(key)
 
         idx += 1
 
@@ -59,13 +60,14 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
+    text_final = ''
 
     lvl1 = convert_keywords(["manajemen keamanan informasi"])
     res1 = txtreader(filename, 1, lvl1)
 
     # check if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return ''
+        return text_final
 
     # keywords for level 2 and 3 are the same
     lvl2_3 = convert_keywords(['penetapan ruang lingkup', 
@@ -101,18 +103,20 @@ def ceklvl(filename):
         if (el[1] not in list_final):
             list_final.append(el[1])
 
+    text_final = ". ".join(list_final)
 
     return clean_text(list_final)
 
 
-# filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
-filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
+filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
+# filename = 'PERBUB NO 34 TAHUN 2019 TENTANG RENCANA INDUK SPBE.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
 (instansilama, judullama) = doklama.pdfparser(filename)
-
 teks_final = ceklvl(filename)
 
 # hasil text finding
 # bisa langsung digunakan ke model text similarity
 print(teks_final)
+print(instansibaru, judulbaru)
+print(instansilama, judullama)
