@@ -69,13 +69,12 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     res1 = txtreader(filename, 1, [])
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return text_final
+        return ''
 
     lvl2 = ["perencanaan", "analisis", "desain", "implementasi",
             "pemeliharaan"]
@@ -123,7 +122,7 @@ def ceklvl(filename):
     return clean_text(list_final)
 
 
-filename = 'F2201-287-Indikator_01_+_Indikator1_Perbup_81_tahun_2021.pdf'
+filename = 'F2201-287-Indikator_01~+~Indikator1_Perbup_81_tahun_2021.pdf'
 # filename2 = 'Draft Perbup SPBE 2021 Revisi.pdf'
 
 (instansibaru, judulbaru) = dokbaru.pdfparser(filename)
