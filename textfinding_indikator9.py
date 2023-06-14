@@ -49,14 +49,13 @@ def txtreader(filename, lv, keyword):
 
 def ceklvl(filename):
     list_final = []
-    text_final = ''
 
     lvl1 = ["TIK", "Teknologi Informasi dan Komunikasi"]
     res1 = txtreader(filename, 1, lvl1)
 
     # cek if keyword lvl1 is not found, then return as empty string
     if (not res1):
-        return text_final
+        return ''
 
     lvl2 = convert_keywords(
         ["Infrastruktur SPBE", "Aplikasi SPBE", "Keamanan SPBE"])
@@ -69,8 +68,6 @@ def ceklvl(filename):
     for el in res2:
         if (el[1] not in list_final):
             list_final.append(el[1])
-
-    text_final = ". ".join(list_final)
 
     return clean_text(list_final)
 
